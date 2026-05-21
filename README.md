@@ -114,30 +114,78 @@ npm.cmd run create -- "직장인 공감 업무 습관" --style meme
 
 ## 전체 파라미터
 
-| 파라미터 | 별칭 | 설명 | 예시 |
+아래 표는 CLI에서 바로 쓸 수 있는 모든 파라미터입니다. 값이 공백을 포함하면 PowerShell에서 큰따옴표로 감쌉니다.
+
+| 파라미터 | 별칭 | 쓸 수 있는 값 | 예시 |
 | --- | --- | --- | --- |
-| `"주제"` | 없음 | 카드뉴스 주제 | `"AI를 꼭 사용해야하는 이유"` |
-| `--file` | `-f` | JSON 입력 파일 | `--file topics/example.json` |
-| `--cards` | `--max-cards` | 카드 수, 2-10장 | `--cards 5` |
-| `--preset` | `--design-preset` | 디자인 프리셋 | `--preset bold` |
-| `--visual-style` | `--style` | 시각 스타일 | `--style photo` |
-| `--audience` | 없음 | 대상 독자 | `--audience "동네 매장 사장님"` |
-| `--goal` | 없음 | 카드뉴스 목적 | `--goal "오늘 바로 실행할 항목 정리"` |
-| `--domain` | 없음 | 전문 분야 | `--domain real_estate` |
-| `--content-type` | 없음 | 콘텐츠 성격 | `--content-type general_info` |
-| `--source` | 없음 | 출처, 반복 가능 | `--source "자료명|https://example.com|2026-05-21"` |
-| `--checked-at` | 없음 | 출처 확인일 기본값 | `--checked-at 2026-05-21` |
-| `--fact` | 없음 | 확인된 핵심 사실, 반복 가능 | `--fact "등기부등본은 계약 직전 다시 확인"` |
-| `--must-include` | 없음 | 반드시 반영할 내용, 반복 가능 | `--must-include "보증금 반환 위험"` |
-| `--source-note` | 없음 | 출처/검수 메모, 반복 가능 | `--source-note "확인일을 검수 단계에 남김"` |
-| `--reviewer-role` | 없음 | 검수자 역할 | `--reviewer-role "변호사"` |
-| `--review-status` | 없음 | 검수 상태 | `--review-status required` |
-| `--disclaimer` | 없음 | 면책/주의 문구 | `--disclaimer "본 콘텐츠는 일반 정보입니다."` |
-| `--forbidden-claim` | 없음 | 금지 표현, 반복 가능 | `--forbidden-claim "100% 승소"` |
-| `--brand-name` | 없음 | 푸터/브랜드 이름 | `--brand-name "Local Boost"` |
-| `--color` | 없음 | 브랜드 색상, 반복 가능 | `--color "#0f766e" --color "#f8fafc"` |
-| `--card` | 없음 | 특정 카드만 출력 | `--card 2` |
-| `--output` | `--out` | 출력 루트 폴더 | `--output output/custom` |
+| `"주제"` | 없음 | 자유 텍스트 | `"AI를 꼭 사용해야하는 이유"` |
+| `--file` | `-f` | 워크스페이스 안 JSON 파일 경로 | `--file topics/example.json`, `-f topics/estate-law.json` |
+| `--cards` | `--max-cards` | 숫자. 최소 2, 최대 10으로 자동 제한 | `--cards 4`, `--max-cards 8`, `--cards 12` |
+| `--preset` | `--design-preset` | `educational`, `promotional`, `minimal`, `bold`, `editorial` | `--preset educational`, `--preset bold`, `--design-preset editorial` |
+| `--visual-style` | `--style` | `photo`, `illustration`, `3d`, `magazine`, `meme` 또는 한국어 별칭 | `--style photo`, `--style 3d`, `--visual-style "사진형"`, `--style "밈"` |
+| `--audience` | 없음 | 대상 독자 자유 텍스트 | `--audience "동네 매장 사장님"`, `--audience "전세 계약을 앞둔 임차인"` |
+| `--goal` | 없음 | 카드뉴스 목적 자유 텍스트 | `--goal "오늘 바로 실행할 항목 정리"`, `--goal "계약 전 확인 항목을 일반 정보로 정리하기"` |
+| `--domain` | 없음 | `real_estate`, `insurance`, `legal`, `medical` 또는 별칭 | `--domain real_estate`, `--domain insurance`, `--domain "법률"`, `--domain health` |
+| `--content-type` | 없음 | `general_info`, `advertisement` 또는 별칭 | `--content-type general_info`, `--content-type advertisement`, `--content-type "광고"` |
+| `--source` | 없음 | `자료명|URL|확인일` 형식. 반복 가능 | `--source "국가법령정보센터 공인중개사법|https://www.law.go.kr/|2026-05-21"` |
+| `--checked-at` | 없음 | `YYYY-MM-DD` 같은 확인일 텍스트 | `--checked-at 2026-05-21` |
+| `--fact` | 없음 | 확인된 핵심 사실 자유 텍스트. 반복 가능 | `--fact "등기부등본은 계약 직전 다시 확인합니다." --fact "보증 가입 가능 여부를 확인합니다."` |
+| `--must-include` | 없음 | 반드시 카드 내용에 반영할 문장. 반복 가능 | `--must-include "전입신고와 확정일자는 별도 확인 항목으로 다룹니다."` |
+| `--source-note` | 없음 | 출처/검수 메모. 반복 가능 | `--source-note "국가법령정보센터와 보증기관 안내를 함께 확인합니다."` |
+| `--reviewer-role` | 없음 | 검수자 역할 자유 텍스트 | `--reviewer-role "공인중개사 또는 변호사"`, `--reviewer-role "의사 또는 의료 전문가"` |
+| `--review-status` | 없음 | 검수 상태 자유 텍스트. 기본값은 `required` | `--review-status required`, `--review-status draft`, `--review-status reviewed` |
+| `--disclaimer` | 없음 | 면책/주의 문구 자유 텍스트 | `--disclaimer "본 콘텐츠는 일반 정보이며, 개별 판단은 전문가 상담이 필요합니다."` |
+| `--forbidden-claim` | 없음 | 금지 표현 자유 텍스트. 반복 가능 | `--forbidden-claim "100% 승소" --forbidden-claim "무조건 보장"` |
+| `--brand-name` | 없음 | 푸터/브랜드 이름 | `--brand-name "Local Boost"`, `--brand-name "Card News Maker"` |
+| `--color` | 없음 | 브랜드 색상. 첫 번째는 accent, 두 번째는 background. 반복 가능 | `--color "#0f766e" --color "#f8fafc"` |
+| `--card` | 없음 | 다시 만들 카드 번호. 1부터 전체 카드 수 사이 | `--card 2`, `--card 6` |
+| `--output` | `--out` | 워크스페이스 안 출력 루트 폴더 | `--output output/custom`, `--out output/test-run` |
+
+### 파라미터 조합 예시
+
+기본 주제만 입력:
+
+```powershell
+npm.cmd run create -- "AI를 꼭 사용해야하는 이유"
+```
+
+대상, 목적, 카드 수까지 지정:
+
+```powershell
+npm.cmd run create -- "소상공인 온라인 마케팅 체크리스트" --audience "동네 매장 사장님" --goal "오늘 바로 실행할 홍보 항목을 정리하기" --cards 6
+```
+
+디자인 프리셋과 시각 스타일 지정:
+
+```powershell
+npm.cmd run create -- "브랜드 스토리 인사이트" --preset editorial --style magazine
+npm.cmd run create -- "제품 구조를 쉽게 이해하는 법" --design-preset educational --visual-style 3d
+npm.cmd run create -- "직장인 공감 업무 습관" --preset minimal --style "밈"
+```
+
+전문 분야 안전 정보까지 지정:
+
+```powershell
+npm.cmd run create -- "전세 계약 전 확인할 5가지" --domain real_estate --content-type general_info --source "국가법령정보센터 공인중개사법|https://www.law.go.kr/|2026-05-21" --reviewer-role "공인중개사 또는 변호사" --disclaimer "본 콘텐츠는 일반 정보이며, 개별 계약 판단은 전문가 상담이 필요합니다." --forbidden-claim "무조건 안전"
+```
+
+확인된 사실과 필수 반영 내용을 추가:
+
+```powershell
+npm.cmd run create -- "전세 계약 전 확인할 5가지" --fact "등기부등본은 계약 직전 다시 확인해야 합니다." --must-include "전입신고와 확정일자는 별도 확인 항목으로 다룹니다." --source-note "국가법령정보센터와 보증기관 안내를 함께 확인합니다."
+```
+
+브랜드 색상과 출력 폴더 지정:
+
+```powershell
+npm.cmd run create -- "카페 신메뉴 홍보 카드뉴스" --brand-name "Local Boost" --color "#0f766e" --color "#f8fafc" --output output/local-boost
+```
+
+특정 카드만 다시 생성:
+
+```powershell
+npm.cmd run create -- "전세 계약 전 확인할 5가지" --card 2
+```
 
 ## 전문 분야 모드
 

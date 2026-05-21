@@ -2,9 +2,9 @@
  "topic": "전세 계약 전 확인할 5가지",
  "audience": "전세 계약을 앞둔 임차인",
  "goal": "계약 전 확인 항목을 일반 정보로 정리하기",
- "maxCards": 6,
+ "maxCards": 8,
  "designPreset": "bold",
- "visualStyle": "illustration",
+ "visualStyle": "3d",
  "domain": "real_estate",
  "contentType": "general_info",
  "sources": [
