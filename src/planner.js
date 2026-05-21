@@ -1,4 +1,9 @@
 const { clampCardCount, slugifyTopic } = require("./utils");
+const {
+  appendObjectParticle,
+  appendSubjectParticle,
+  appendTopicParticle
+} = require("./korean");
 const { createProfessionalContext } = require("./professional");
 
 const DESIGN_PRESETS = {
@@ -125,12 +130,15 @@ function createCardNewsPlan(request) {
   const preset = selectDesignPreset(request);
   const visualStyleId = selectVisualStyle({ ...request, designPreset: preset });
   const professional = createProfessionalContext({ ...request, topic });
+  const contentControls = createContentControls(request);
   const design = {
     preset,
     ...DESIGN_PRESETS[preset],
     ...(request.brand?.colors?.[0] ? { accent: request.brand.colors[0] } : {}),
     ...(request.brand?.colors?.[1] ? { background: request.brand.colors[1] } : {})
   };
+  const visualStyle = VISUAL_STYLES[visualStyleId];
+  const styleAnchor = createStyleAnchor({ topic, design, visualStyle });
 
   return {
     id: slugifyTopic(topic),
@@ -140,9 +148,11 @@ function createCardNewsPlan(request) {
     brand: request.brand || { name: "Card News Maker", colors: [] },
     brief: buildBrief(topic, request),
     design,
-    visualStyle: VISUAL_STYLES[visualStyleId],
+    visualStyle,
+    styleAnchor,
+    contentControls,
     professional,
-    cards: buildCards({ ...request, topic, maxCards, designPreset: preset }),
+    cards: buildCards({ ...request, topic, maxCards, designPreset: preset, contentControls, professional }),
     meta: {
       generator: "local",
       aiReady: Boolean(process.env.OPENAI_API_KEY),
@@ -250,11 +260,27 @@ function normalizeVisualStyle(value) {
   return aliases[key];
 }
 
+function createContentControls(request) {
+  return {
+    facts: normalizeStringArray(request.facts),
+    mustInclude: normalizeStringArray(request.mustInclude),
+    sourceNotes: normalizeStringArray(request.sourceNotes)
+  };
+}
+
+function createStyleAnchor({ topic, design, visualStyle }) {
+  return {
+    seriesId: `${topic} | ${design.preset} | ${visualStyle.id}`,
+    visualMotif: `${appendObjectParticle(topic)} 상징하는 반복 오브젝트를 모든 카드에서 같은 질감과 시점으로 유지합니다.`,
+    layoutSystem: `${design.name} 카드뉴스로 보이도록 여백, 제목 위치, 보조 시각 요소의 크기를 일관되게 유지합니다.`,
+    titleRule: "Break long Korean titles into two balanced lines when needed; keep natural word groups together."
+  };
+}
 
 function buildBrief(topic, request) {
   const audience = request.audience || "인스타그램 사용자";
   const goal = request.goal || "핵심 정보를 빠르게 이해시키기";
-  return `${audience}가 ${topic}을 빠르게 이해하고, 다음 행동을 고를 수 있도록 ${goal}.`;
+  return `${appendSubjectParticle(audience)} ${appendObjectParticle(topic)} 빠르게 이해하고, 다음 행동을 고를 수 있도록 ${goal}.`;
 }
 
 function buildCards(request) {
@@ -268,14 +294,10 @@ function buildCards(request) {
     navigation: { type: "none" },
     eyebrow: "",
     title: request.topic,
-    body: `${request.audience || "인스타그램 사용자"}를 위한 핵심 정리`,
+    body: `${appendObjectParticle(request.audience || "인스타그램 사용자")} 위한 핵심 정리`,
     bullets: [],
     footer: request.brand?.name || "Card News Maker"
   });
-
-  if (total === 1) {
-    return cards;
-  }
 
   const bodyCount = Math.max(0, total - 2);
   const bodyTemplates = createBodyTemplates(request);
@@ -303,7 +325,7 @@ function buildCards(request) {
     navigation: { type: "none" },
     eyebrow: "",
     title: "마지막으로 기억할 것",
-    body: `${request.topic}은 상황에 따라 달라질 수 있습니다. 저장 후 내 조건과 최신 기준을 다시 확인하세요.`,
+    body: `${appendTopicParticle(request.topic)} 상황에 따라 달라질 수 있습니다. 저장 후 내 조건과 최신 기준을 다시 확인하세요.`,
     bullets: [],
     footer: request.brand?.name || "Card News Maker"
   });
@@ -332,6 +354,14 @@ function createBodyNavigation(preset, bodyNumber) {
 function applyTextDensity(template, request, preset) {
   const density = TEXT_DENSITY_BY_PRESET[preset] || TEXT_DENSITY_BY_PRESET.educational;
   const bullets = template.bullets.slice(0, density.bullets);
+
+  if (template.custom) {
+    return {
+      title: template.title,
+      body: template.body,
+      bullets: template.bullets
+    };
+  }
 
   if (density.body === "minimal") {
     return {
@@ -368,7 +398,32 @@ function createBodyTemplates(request) {
   const topic = request.topic;
   const audience = request.audience || "인스타그램 사용자";
   const goal = request.goal || "핵심 정보를 빠르게 이해시키기";
+  const outlineTemplates = createTemplatesFromContentOutline(request.contentOutline);
+  const controlledTemplates = createTemplatesFromContentControls(request.contentControls || request);
+  const topicTemplates = createTopicSpecificTemplates(request);
+  const genericTemplates = createGenericTemplates({ topic, audience, goal });
 
+  if (outlineTemplates.length) {
+    return uniqueTemplatesByTitle([
+      ...outlineTemplates,
+      ...controlledTemplates,
+      ...topicTemplates,
+      ...genericTemplates
+    ]);
+  }
+
+  if (controlledTemplates.length || topicTemplates.length) {
+    return uniqueTemplatesByTitle([
+      ...controlledTemplates,
+      ...topicTemplates,
+      ...genericTemplates
+    ]);
+  }
+
+  return genericTemplates;
+}
+
+function createGenericTemplates({ topic, audience, goal }) {
   return [
     {
       title: "먼저 핵심만 잡기",
@@ -411,6 +466,149 @@ function createBodyTemplates(request) {
       bullets: ["핵심 기준", "첫 행동", "재확인 지점"]
     }
   ];
+}
+
+function uniqueTemplatesByTitle(templates) {
+  const seen = new Set();
+  const uniqueTemplates = [];
+
+  for (const template of templates) {
+    if (seen.has(template.title)) {
+      continue;
+    }
+
+    seen.add(template.title);
+    uniqueTemplates.push(template);
+  }
+
+  return uniqueTemplates;
+}
+
+function createTemplatesFromContentOutline(contentOutline) {
+  if (!Array.isArray(contentOutline) || contentOutline.length === 0) {
+    return [];
+  }
+
+  return contentOutline
+    .map((item) => ({
+      title: String(item.title || item.body || "").trim(),
+      body: String(item.body || item.title || "").trim(),
+      bullets: normalizeStringArray(item.bullets),
+      custom: true
+    }))
+    .filter((item) => item.title && item.body);
+}
+
+function createTemplatesFromContentControls(controls) {
+  const facts = normalizeStringArray(controls.facts);
+  const mustInclude = normalizeStringArray(controls.mustInclude);
+  const sourceNotes = normalizeStringArray(controls.sourceNotes).slice(0, 2);
+
+  return [
+    ...mustInclude.map((item, index) => ({
+      title: deriveControlTitle(item, `필수 반영 ${String(index + 1).padStart(2, "0")}`),
+      body: item,
+      bullets: sourceNotes,
+      custom: true
+    })),
+    ...facts.map((item, index) => ({
+      title: deriveControlTitle(item, `확인된 기준 ${String(index + 1).padStart(2, "0")}`),
+      body: item,
+      bullets: sourceNotes,
+      custom: true
+    }))
+  ];
+}
+
+function deriveControlTitle(value, fallback) {
+  const text = String(value || "").trim();
+  if (!text) {
+    return fallback;
+  }
+
+  const particleMatch = text.match(/^(.+?)(은|는|을|를|이|가)\s/);
+  if (particleMatch?.[1]) {
+    return trimTitle(particleMatch[1]);
+  }
+
+  return trimTitle(text.replace(/(합니다|다룹니다|확인합니다|필요합니다)[.!?]?$/g, ""));
+}
+
+function trimTitle(value) {
+  const text = String(value || "")
+    .replace(/[.!?]+$/g, "")
+    .trim();
+
+  return text.length > 18 ? `${text.slice(0, 18).trim()}...` : text;
+}
+
+function createTopicSpecificTemplates(request) {
+  if (isJeonseRealEstateTopic(request)) {
+    return [
+      {
+        title: "등기부등본 먼저 확인",
+        body: "소유자, 근저당, 압류 등 권리관계를 계약 전과 계약 당일에 다시 확인합니다.",
+        bullets: ["소유자 일치", "선순위 권리"]
+      },
+      {
+        title: "보증금 반환 위험 보기",
+        body: "보증금 규모, 선순위 채권, 보증 가입 가능 여부를 함께 놓고 판단합니다.",
+        bullets: ["선순위 채권", "보증 가능 여부"]
+      },
+      {
+        title: "특약과 계약 조건 분리",
+        body: "구두 약속은 분쟁이 생기기 쉬우므로 필요한 조건은 계약서 특약으로 남깁니다.",
+        bullets: ["수리 범위", "잔금 전 말소 조건"]
+      },
+      {
+        title: "입주 후 절차 확인",
+        body: "입주 뒤에는 전입신고, 확정일자, 보증 관련 절차를 빠르게 확인합니다.",
+        bullets: ["전입신고", "확정일자"]
+      }
+    ];
+  }
+
+  if (/(마케팅|홍보|광고|소상공인|매장)/.test(`${request.topic || ""} ${request.goal || ""}`)) {
+    return [
+      {
+        title: "채널 하나만 먼저 고르기",
+        body: "모든 채널을 동시에 시작하기보다 고객이 실제로 보는 채널 하나에 집중합니다.",
+        bullets: ["네이버 지도", "인스타그램"]
+      },
+      {
+        title: "오늘 올릴 소재 정하기",
+        body: "메뉴, 후기, 위치, 이벤트처럼 바로 촬영하거나 정리할 수 있는 소재부터 고릅니다.",
+        bullets: ["고객 후기", "대표 상품"]
+      },
+      {
+        title: "반응을 숫자로 남기기",
+        body: "조회수보다 문의, 저장, 방문처럼 다음 행동과 가까운 지표를 기록합니다.",
+        bullets: ["저장 수", "문의 수"]
+      },
+      {
+        title: "한 줄 행동 요청 넣기",
+        body: "게시물 끝에는 저장, 문의, 방문처럼 고객이 바로 할 수 있는 행동을 하나만 남깁니다.",
+        bullets: ["저장하기", "문의하기"]
+      }
+    ];
+  }
+
+  return [];
+}
+
+function isJeonseRealEstateTopic(request) {
+  const source = `${request.topic || ""} ${request.goal || ""}`;
+  return /(전세|임대차|보증금)/.test(source) || request.professional?.domain === "real_estate" || request.domain === "real_estate";
+}
+
+function normalizeStringArray(value) {
+  if (!value) {
+    return [];
+  }
+
+  return (Array.isArray(value) ? value : [value])
+    .map((item) => String(item).trim())
+    .filter(Boolean);
 }
 
 module.exports = {

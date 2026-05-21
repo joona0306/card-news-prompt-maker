@@ -104,6 +104,40 @@ test("JSON file input preserves professional domain metadata", () => {
   assert.deepEqual(request.forbiddenClaims, ["확정 수익", "무조건 안전"]);
 });
 
+test("JSON file input preserves structured card copy and content controls", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "card-news-input-"));
+  const file = path.join(dir, "topic.json");
+  fs.writeFileSync(
+    file,
+    JSON.stringify({
+      topic: "전세 계약 전 확인할 5가지",
+      maxCards: 4,
+      contentOutline: [
+        {
+          title: "등기부등본 먼저 확인",
+          body: "소유자, 근저당, 압류 여부를 계약 전 확인합니다.",
+          bullets: ["계약 당일 재확인", "주소와 소유자 일치 확인"]
+        },
+        "보증금 반환 위험을 따로 적어두기"
+      ],
+      facts: ["등기부등본은 계약 직전 다시 확인해야 합니다."],
+      mustInclude: ["전입신고와 확정일자는 별도 확인 항목으로 다룹니다."],
+      sourceNotes: ["국가법령정보센터와 보증기관 안내를 함께 확인합니다."]
+    }),
+    "utf8"
+  );
+
+  const request = normalizeInput(["--file", file]);
+
+  assert.equal(request.contentOutline.length, 2);
+  assert.equal(request.contentOutline[0].title, "등기부등본 먼저 확인");
+  assert.equal(request.contentOutline[0].bullets.length, 2);
+  assert.equal(request.contentOutline[1].title, "보증금 반환 위험을 따로 적어두기");
+  assert.deepEqual(request.facts, ["등기부등본은 계약 직전 다시 확인해야 합니다."]);
+  assert.deepEqual(request.mustInclude, ["전입신고와 확정일자는 별도 확인 항목으로 다룹니다."]);
+  assert.deepEqual(request.sourceNotes, ["국가법령정보센터와 보증기관 안내를 함께 확인합니다."]);
+});
+
 test("CLI input can include professional safety metadata", () => {
   const request = normalizeInput([
     "보험금 청구 전 확인사항",
@@ -131,6 +165,22 @@ test("CLI input can include professional safety metadata", () => {
   assert.deepEqual(request.forbiddenClaims, ["무조건 보장"]);
 });
 
+test("CLI input can include content control metadata", () => {
+  const request = normalizeInput([
+    "전세 계약 전 확인사항",
+    "--fact",
+    "등기부등본은 계약 직전 다시 확인합니다.",
+    "--must-include",
+    "보증금 반환 위험을 별도 카드로 다룹니다.",
+    "--source-note",
+    "출처 확인일을 카드 검수 단계에 남깁니다."
+  ]);
+
+  assert.deepEqual(request.facts, ["등기부등본은 계약 직전 다시 확인합니다."]);
+  assert.deepEqual(request.mustInclude, ["보증금 반환 위험을 별도 카드로 다룹니다."]);
+  assert.deepEqual(request.sourceNotes, ["출처 확인일을 카드 검수 단계에 남깁니다."]);
+});
+
 test("JSON path can be passed as the first argument", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "card-news-input-"));
   const file = path.join(dir, "topic.json");
@@ -147,5 +197,12 @@ test("missing topic throws a clear validation error", () => {
   assert.throws(
     () => normalizeInput([]),
     /주제를 입력하거나 JSON 파일을 지정/
+  );
+});
+
+test("missing option values throw clear validation errors", () => {
+  assert.throws(
+    () => normalizeInput(["보험금 청구", "--source"]),
+    /--source 옵션 뒤에 값을 지정/
   );
 });

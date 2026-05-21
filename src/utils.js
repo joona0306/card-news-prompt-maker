@@ -39,18 +39,8 @@ function ensureInsideWorkspace(workspaceRoot, candidatePath) {
   return candidate;
 }
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
 module.exports = {
   clampCardCount,
   ensureInsideWorkspace,
-  escapeHtml,
   slugifyTopic
 };

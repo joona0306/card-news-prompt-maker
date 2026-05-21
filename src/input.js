@@ -56,6 +56,9 @@ function normalizeInput(args = [], options = {}) {
       review: optionValues.review,
       disclaimer: optionValues.disclaimer,
       forbiddenClaims: optionValues.forbiddenClaims,
+      facts: optionValues.facts,
+      mustInclude: optionValues.mustInclude,
+      sourceNotes: optionValues.sourceNotes,
       brand: optionValues.brand
     },
     "cli"
@@ -68,57 +71,65 @@ function parseInlineOptions(args) {
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
-    const next = args[index + 1];
 
     if (arg === "--cards" || arg === "--max-cards") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.maxCards = next;
       index += 1;
       continue;
     }
 
     if (arg === "--preset" || arg === "--design-preset") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.designPreset = next;
       index += 1;
       continue;
     }
 
     if (arg === "--visual-style" || arg === "--style") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.visualStyle = next;
       index += 1;
       continue;
     }
 
     if (arg === "--audience") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.audience = next;
       index += 1;
       continue;
     }
 
     if (arg === "--domain") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.domain = next;
       index += 1;
       continue;
     }
 
     if (arg === "--content-type") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.contentType = next;
       index += 1;
       continue;
     }
 
     if (arg === "--source") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.sources = [...(optionValues.sources || []), next];
       index += 1;
       continue;
     }
 
     if (arg === "--checked-at") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.checkedAt = next;
       index += 1;
       continue;
     }
 
     if (arg === "--reviewer-role") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.review = {
         ...(optionValues.review || {}),
         reviewerRole: next
@@ -128,6 +139,7 @@ function parseInlineOptions(args) {
     }
 
     if (arg === "--review-status") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.review = {
         ...(optionValues.review || {}),
         status: next
@@ -137,24 +149,49 @@ function parseInlineOptions(args) {
     }
 
     if (arg === "--disclaimer") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.disclaimer = next;
       index += 1;
       continue;
     }
 
     if (arg === "--forbidden-claim") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.forbiddenClaims = [...(optionValues.forbiddenClaims || []), next];
       index += 1;
       continue;
     }
 
+    if (arg === "--fact") {
+      const next = readRequiredOptionValue(args, index, arg);
+      optionValues.facts = [...(optionValues.facts || []), next];
+      index += 1;
+      continue;
+    }
+
+    if (arg === "--must-include") {
+      const next = readRequiredOptionValue(args, index, arg);
+      optionValues.mustInclude = [...(optionValues.mustInclude || []), next];
+      index += 1;
+      continue;
+    }
+
+    if (arg === "--source-note") {
+      const next = readRequiredOptionValue(args, index, arg);
+      optionValues.sourceNotes = [...(optionValues.sourceNotes || []), next];
+      index += 1;
+      continue;
+    }
+
     if (arg === "--goal") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.goal = next;
       index += 1;
       continue;
     }
 
     if (arg === "--brand-name") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.brand = {
         ...(optionValues.brand || {}),
         name: next
@@ -164,6 +201,7 @@ function parseInlineOptions(args) {
     }
 
     if (arg === "--color") {
+      const next = readRequiredOptionValue(args, index, arg);
       optionValues.brand = {
         ...(optionValues.brand || {}),
         colors: [...((optionValues.brand || {}).colors || []), next]
@@ -206,12 +244,65 @@ function normalizeRawRequest(raw, source) {
     checkedAt: raw.checkedAt,
     review: raw.review || {},
     disclaimer: raw.disclaimer ? String(raw.disclaimer).trim() : undefined,
-    forbiddenClaims: Array.isArray(raw.forbiddenClaims)
-      ? raw.forbiddenClaims.map((item) => String(item).trim()).filter(Boolean)
-      : raw.forbiddenClaims ? [String(raw.forbiddenClaims).trim()] : [],
+    forbiddenClaims: normalizeStringArray(raw.forbiddenClaims),
+    contentOutline: normalizeContentOutline(raw.contentOutline || raw.cards),
+    facts: normalizeStringArray(raw.facts || raw.checkedFacts),
+    mustInclude: normalizeStringArray(raw.mustInclude),
+    sourceNotes: normalizeStringArray(raw.sourceNotes),
     brand,
     source
   };
+}
+
+function readRequiredOptionValue(args, index, optionName) {
+  const value = args[index + 1];
+  if (value === undefined || value === null || String(value).trim() === "" || String(value).startsWith("--")) {
+    throw new Error(`${optionName} 옵션 뒤에 값을 지정해 주세요.`);
+  }
+
+  return value;
+}
+
+function normalizeContentOutline(value) {
+  if (!value) {
+    return [];
+  }
+
+  const items = Array.isArray(value) ? value : [value];
+  return items
+    .map((item) => normalizeContentItem(item))
+    .filter((item) => item.title || item.body);
+}
+
+function normalizeContentItem(item) {
+  if (typeof item === "string") {
+    const text = item.trim();
+    return {
+      title: text,
+      body: text,
+      bullets: []
+    };
+  }
+
+  const title = String(item.title || item.headline || "").trim();
+  const body = String(item.body || item.copy || item.text || title).trim();
+  const fallbackTitle = title || body.slice(0, 28).trim();
+
+  return {
+    title: fallbackTitle,
+    body,
+    bullets: normalizeStringArray(item.bullets || item.points)
+  };
+}
+
+function normalizeStringArray(value) {
+  if (!value) {
+    return [];
+  }
+
+  return (Array.isArray(value) ? value : [value])
+    .map((item) => String(item).trim())
+    .filter(Boolean);
 }
 
 function readJsonFile(filePath) {

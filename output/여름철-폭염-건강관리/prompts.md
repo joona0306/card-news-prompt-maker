@@ -7,6 +7,7 @@
 - Cards in plan: 8
 - Design preset: educational
 - Visual style: 밈형 (meme)
+- Style guide: style-guide.md
 - Professional domain: 의학 (medical)
 
 ## Prompt Files

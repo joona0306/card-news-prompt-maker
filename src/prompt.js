@@ -5,8 +5,10 @@ const { ensureInsideWorkspace } = require("./utils");
 
 function buildImagePrompt(plan, card) {
   const visual = buildVisualDirection(plan, card);
+  const styleAnchor = buildStyleAnchor(plan);
   const navigation = buildNavigationInstruction(plan, card);
   const exactText = buildExactText(plan, card);
+  const contentControls = buildContentControls(plan.contentControls);
   const professionalSafety = buildProfessionalSafety(plan.professional);
 
   return [
@@ -22,6 +24,9 @@ function buildImagePrompt(plan, card) {
     "Visual direction:",
     visual,
     "",
+    "Series style anchor:",
+    styleAnchor,
+    "",
     "Layout:",
     "- Square 1080x1080 composition for Instagram carousel.",
     "- Use a professional Korean social-media card-news layout.",
@@ -31,12 +36,15 @@ function buildImagePrompt(plan, card) {
     "- Keep all text inside readable zones with strong contrast.",
     navigation,
     "",
+    contentControls,
+    contentControls ? "" : undefined,
     "Text must be exactly:",
     exactText,
     "",
     "Typography:",
     "- Modern Korean sans-serif style.",
     "- Strong hierarchy: title large, body medium, optional bullet text compact.",
+    `- ${plan.styleAnchor?.titleRule || "Break long Korean titles into two balanced lines when needed."}`,
     "- If a badge is listed in the exact text, keep it small and separate from the headline.",
     "- No distorted, misspelled, duplicated, or decorative Korean characters.",
     "",
@@ -66,7 +74,7 @@ function writePromptFiles(plan, options = {}) {
   const selectedCards = selectCards(plan.cards, options.cardNumber);
 
   fs.mkdirSync(outputDir, { recursive: true });
-  removeGeneratedFiles(outputDir);
+  removeGeneratedFiles(outputDir, selectedCards.map((card) => card.index), Boolean(options.cardNumber));
 
   const promptFiles = selectedCards.map((card) => {
     const file = path.join(outputDir, `prompt-${String(card.index).padStart(2, "0")}.md`);
@@ -82,21 +90,30 @@ ${buildImagePrompt(plan, card)}
 
   const indexFile = path.join(outputDir, "prompts.md");
   fs.writeFileSync(indexFile, buildPromptIndex(plan, promptFiles, options.cardNumber), "utf8");
+  const styleGuideFile = path.join(outputDir, "style-guide.md");
+  fs.writeFileSync(styleGuideFile, buildStyleGuide(plan), "utf8");
 
   return {
     outputDir,
     promptFiles,
-    indexFile
+    indexFile,
+    styleGuideFile
   };
 }
 
-function removeGeneratedFiles(outputDir) {
+function removeGeneratedFiles(outputDir, selectedIndexes = [], partial = false) {
+  const selected = new Set(selectedIndexes.map((index) => Number(index)));
+
   for (const entry of fs.readdirSync(outputDir, { withFileTypes: true })) {
     if (!entry.isFile()) {
       continue;
     }
 
-    if (/^card-\d{2}\.(html|png)$/i.test(entry.name) || /^prompt-\d{2}\.md$/i.test(entry.name)) {
+    const promptMatch = entry.name.match(/^prompt-(\d{2})\.md$/i);
+    const legacyHtmlMatch = entry.name.match(/^card-(\d{2})\.html$/i);
+    const matchedIndex = Number(promptMatch?.[1] || legacyHtmlMatch?.[1]);
+
+    if ((promptMatch || legacyHtmlMatch) && (!partial || selected.has(matchedIndex))) {
       fs.rmSync(path.join(outputDir, entry.name), { force: true });
     }
   }
@@ -117,6 +134,7 @@ function selectCards(cards, cardNumber) {
 
 function buildPromptIndex(plan, promptFiles, cardNumber) {
   const selected = cardNumber ? `\n- Selected card: ${cardNumber}` : "";
+  const partialNote = cardNumber ? "\n- Existing prompt files are preserved during selected-card regeneration." : "";
   const files = promptFiles
     .map((file) => `- ${path.basename(file)}`)
     .join("\n");
@@ -130,7 +148,8 @@ function buildPromptIndex(plan, promptFiles, cardNumber) {
 - Cards in plan: ${plan.cards.length}
 - Design preset: ${plan.design.preset}
 - Visual style: ${plan.visualStyle.name} (${plan.visualStyle.id})
-${plan.professional?.enabled ? `- Professional domain: ${plan.professional.domainName} (${plan.professional.domain})` : "- Professional domain: none"}${selected}
+- Style guide: style-guide.md
+${plan.professional?.enabled ? `- Professional domain: ${plan.professional.domainName} (${plan.professional.domain})` : "- Professional domain: none"}${selected}${partialNote}
 
 ## Prompt Files
 
@@ -169,6 +188,90 @@ function buildProfessionalSafety(professional) {
     "- Do not present general information as personalized professional advice.",
     "- Keep any disclaimer text readable if it appears on the card."
   ].join("\n");
+}
+
+function buildStyleAnchor(plan) {
+  const anchor = plan.styleAnchor || {};
+
+  return [
+    "- Keep this card visually consistent with the same carousel series.",
+    `- Series ID: ${anchor.seriesId || `${plan.topic} | ${plan.design.preset} | ${plan.visualStyle.id}`}`,
+    `- Repeated visual motif: ${anchor.visualMotif || `${plan.topic}을 상징하는 반복 오브젝트`}`,
+    `- Layout system: ${anchor.layoutSystem || `${plan.design.name} 레이아웃을 일관되게 유지`}`,
+    "- Reuse the same palette, title rhythm, visual scale, and margin system across every card."
+  ].join("\n");
+}
+
+function buildContentControls(controls) {
+  if (!controls) {
+    return "";
+  }
+
+  const facts = formatList("Checked facts", controls.facts);
+  const mustInclude = formatList("Must include", controls.mustInclude);
+  const sourceNotes = formatList("Source notes", controls.sourceNotes);
+
+  if (!facts && !mustInclude && !sourceNotes) {
+    return "";
+  }
+
+  return [
+    "Content controls:",
+    "- Use these controls to avoid generic copy and unsupported claims.",
+    facts,
+    mustInclude,
+    sourceNotes
+  ].filter(Boolean).join("\n");
+}
+
+function formatList(label, values) {
+  if (!Array.isArray(values) || values.length === 0) {
+    return "";
+  }
+
+  return [`- ${label}:`, ...values.map((value) => `  - ${value}`)].join("\n");
+}
+
+function buildStyleGuide(plan) {
+  const controls = buildContentControls(plan.contentControls);
+
+  return `# Series Style Guide
+
+## Summary
+
+- Topic: ${plan.topic}
+- Size: ${plan.meta.size}
+- Cards: ${plan.cards.length}
+- Design preset: ${plan.design.name} (${plan.design.preset})
+- Visual style: ${plan.visualStyle.name} (${plan.visualStyle.id})
+
+## Series Style Anchor
+
+${buildStyleAnchor(plan)}
+
+## Typography
+
+- Modern Korean sans-serif style.
+- ${plan.styleAnchor?.titleRule || "Break long Korean titles into two balanced lines when needed."}
+- Keep title, body, bullet, footer hierarchy consistent across cards.
+
+## Palette
+
+- Background: ${plan.design.background}
+- Surface: ${plan.design.surface}
+- Primary text: ${plan.design.ink}
+- Muted text: ${plan.design.muted}
+- Accent: ${plan.design.accent}
+- Secondary accent: ${plan.design.accentAlt}
+
+${controls ? `## Content Controls\n\n${controls}\n\n` : ""}## Card Copy
+
+${plan.cards.map((card) => `### Card ${String(card.index).padStart(2, "0")} - ${card.role}
+
+- Title: ${card.title}
+- Body: ${card.body}
+${card.bullets.length ? `- Bullets: ${card.bullets.join(" / ")}` : "- Bullets: none"}
+`).join("\n")}`;
 }
 
 function buildNavigationInstruction(plan, card) {

@@ -87,7 +87,7 @@ Expected: PASS
 
 - [x] **Step 1: Write failing tests**
 
-테스트는 카드 1장 최종 프롬프트, 카드별 파일 생성, 특정 카드만 출력, 내비게이션 문구, 시각 스타일 hard rule, 레거시 HTML/PNG 산출물 정리를 검증한다.
+테스트는 카드 1장 최종 프롬프트, 카드별 파일 생성, 특정 카드만 출력, 내비게이션 문구, 시각 스타일 hard rule, 레거시 HTML 산출물 정리와 최종 PNG 보존을 검증한다.
 
 - [x] **Step 2: Run test and verify failure**
 
@@ -136,6 +136,49 @@ Expected: PASS
 - Generated: `output/<topic>/checklist.md`
 
 - [x] **Step 1: Run all tests**
+
+Run: `npm.cmd test`
+Expected: all tests PASS
+
+### Task 10: Prompt Quality and Regeneration Safety Refresh
+
+**Files:**
+- Create: `src/korean.js`
+- Create: `test/korean.test.js`
+- Modify: `src/input.js`
+- Modify: `src/planner.js`
+- Modify: `src/professional.js`
+- Modify: `src/prompt.js`
+- Modify: `src/cli.js`
+- Modify: `src/utils.js`
+- Modify: `README.md`
+- Modify: `docs/checklists/card-news-harness.md`
+- Test: `test/input.test.js`
+- Test: `test/planner.test.js`
+- Test: `test/prompt.test.js`
+- Test: `test/cli.test.js`
+
+- [x] **Step 1: Write failing tests**
+
+구조화 카드 내용, facts/mustInclude/sourceNotes, 한글 조사, style guide 생성, 비파괴 `--card N` 재생성, 최종 PNG 보존, 누락 옵션 오류 메시지를 검증한다.
+
+- [x] **Step 2: Implement input and Korean copy helpers**
+
+`contentOutline`/`cards`, `facts`, `mustInclude`, `sourceNotes`를 입력 요청으로 정규화하고, `src/korean.js`에서 을/를, 이/가, 은/는 조사를 처리한다.
+
+- [x] **Step 3: Improve planner content quality**
+
+구조화 카드 내용이 있으면 범용 템플릿보다 우선하고, 전세/부동산 및 소상공인 마케팅 주제에는 더 구체적인 기본 템플릿을 사용한다. 플랜에 `styleAnchor`와 `contentControls`를 추가한다.
+
+- [x] **Step 4: Improve prompt output safety**
+
+카드별 프롬프트에 Series style anchor, Content controls, 긴 한글 제목 두 줄 규칙을 추가하고, `style-guide.md`를 생성한다. `--card N`은 해당 프롬프트만 갱신하고 기존 프롬프트와 최종 PNG를 유지한다.
+
+- [x] **Step 5: Update docs and samples**
+
+README, 체크리스트, JSON 예시, output 샘플을 현재 동작 기준으로 갱신한다.
+
+- [x] **Step 6: Verify**
 
 Run: `npm.cmd test`
 Expected: all tests PASS

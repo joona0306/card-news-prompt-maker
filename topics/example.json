@@ -5,6 +5,18 @@
   "maxCards": 6,
   "designPreset": "bold",
   "visualStyle": "photo",
+  "contentOutline": [
+    {
+      "title": "채널 하나만 먼저 고르기",
+      "body": "모든 채널을 동시에 시작하기보다 고객이 실제로 보는 채널 하나에 집중합니다.",
+      "bullets": ["네이버 지도", "인스타그램"]
+    },
+    {
+      "title": "오늘 올릴 소재 정하기",
+      "body": "메뉴, 후기, 위치, 이벤트처럼 바로 촬영하거나 정리할 수 있는 소재부터 고릅니다.",
+      "bullets": ["고객 후기", "대표 상품"]
+    }
+  ],
   "brand": {
     "name": "Card News Maker",
     "colors": ["#0f766e", "#f8fafc"]

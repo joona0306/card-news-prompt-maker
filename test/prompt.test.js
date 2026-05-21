@@ -56,6 +56,26 @@ test("buildImagePrompt includes professional safety constraints when domain is r
   assert.match(prompt, /본 콘텐츠는 일반 정보/);
 });
 
+test("buildImagePrompt includes series style anchor and checked content controls", () => {
+  const plan = createCardNewsPlan({
+    topic: "전세 계약 전 확인할 5가지",
+    maxCards: 4,
+    facts: ["등기부등본은 계약 직전 다시 확인해야 합니다."],
+    mustInclude: ["전입신고와 확정일자는 별도 확인 항목으로 다룹니다."],
+    sourceNotes: ["국가법령정보센터 확인일을 남깁니다."]
+  });
+
+  const prompt = buildImagePrompt(plan, plan.cards[1]);
+
+  assert.match(prompt, /Series style anchor/);
+  assert.match(prompt, /Keep this card visually consistent with the same carousel series/);
+  assert.match(prompt, /Content controls/);
+  assert.match(prompt, /등기부등본은 계약 직전 다시 확인해야 합니다/);
+  assert.match(prompt, /전입신고와 확정일자는 별도 확인 항목/);
+  assert.match(prompt, /국가법령정보센터 확인일/);
+  assert.match(prompt, /Break long Korean titles into two balanced lines when needed/);
+});
+
 test("buildImagePrompt omits navigation text on cover and closing cards", () => {
   const plan = createCardNewsPlan({ topic: "여름철 폭염 건강관리", maxCards: 4 });
 
@@ -105,14 +125,16 @@ test("writePromptFiles writes one prompt per card and an index file", () => {
     assert.equal(result.promptFiles.length, 2);
     assert.ok(fs.existsSync(result.promptFiles[0]));
     assert.ok(fs.existsSync(result.indexFile));
+    assert.ok(fs.existsSync(result.styleGuideFile));
     assert.match(fs.readFileSync(result.promptFiles[0], "utf8"), /AI 면접 준비/);
     assert.match(fs.readFileSync(result.indexFile, "utf8"), /prompt-01.md/);
+    assert.match(fs.readFileSync(result.styleGuideFile, "utf8"), /Series Style Guide/);
   } finally {
     fs.rmSync(outputRoot, { recursive: true, force: true });
   }
 });
 
-test("writePromptFiles can write only a selected card prompt", () => {
+test("writePromptFiles can write only a selected card prompt without deleting other prompts", () => {
   const outputRoot = fs.mkdtempSync(path.join(process.cwd(), ".tmp-test-prompts-"));
   const plan = createCardNewsPlan({ topic: "브랜드 스토리", maxCards: 4 });
 
@@ -123,15 +145,15 @@ test("writePromptFiles can write only a selected card prompt", () => {
     assert.equal(result.promptFiles.length, 1);
     assert.match(path.basename(result.promptFiles[0]), /prompt-03\.md/);
     assert.match(fs.readFileSync(result.indexFile, "utf8"), /Selected card: 3/);
-    assert.equal(fs.existsSync(path.join(result.outputDir, "prompt-01.md")), false);
-    assert.equal(fs.existsSync(path.join(result.outputDir, "prompt-02.md")), false);
-    assert.equal(fs.existsSync(path.join(result.outputDir, "prompt-04.md")), false);
+    assert.equal(fs.existsSync(path.join(result.outputDir, "prompt-01.md")), true);
+    assert.equal(fs.existsSync(path.join(result.outputDir, "prompt-02.md")), true);
+    assert.equal(fs.existsSync(path.join(result.outputDir, "prompt-04.md")), true);
   } finally {
     fs.rmSync(outputRoot, { recursive: true, force: true });
   }
 });
 
-test("writePromptFiles removes legacy HTML and PNG render outputs from the same topic folder", () => {
+test("writePromptFiles removes legacy HTML but preserves final PNG image outputs", () => {
   const outputRoot = fs.mkdtempSync(path.join(process.cwd(), ".tmp-test-prompts-"));
   const plan = createCardNewsPlan({ topic: "레거시 정리", maxCards: 1 });
   const outputDir = path.join(outputRoot, plan.id);
@@ -144,7 +166,7 @@ test("writePromptFiles removes legacy HTML and PNG render outputs from the same 
     writePromptFiles(plan, { outputRoot });
 
     assert.equal(fs.existsSync(path.join(outputDir, "card-01.html")), false);
-    assert.equal(fs.existsSync(path.join(outputDir, "card-01.png")), false);
+    assert.equal(fs.existsSync(path.join(outputDir, "card-01.png")), true);
     assert.equal(fs.existsSync(path.join(outputDir, "custom-note.md")), true);
   } finally {
     fs.rmSync(outputRoot, { recursive: true, force: true });

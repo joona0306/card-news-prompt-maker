@@ -7,6 +7,7 @@
 - Cards in plan: 6
 - Design preset: bold
 - Visual style: 일러스트형 (illustration)
+- Style guide: style-guide.md
 - Professional domain: 부동산 (real_estate)
 
 ## Prompt Files

@@ -16,6 +16,13 @@ Visual direction:
 - Hard visual style rule: photorealistic editorial photography. Keep a photographic look with realistic camera optics, natural shadows, believable materials, and no illustration, 3D render, vector icon, or meme graphic treatment.
 - The visual must support the card message and leave text readable.
 
+Series style anchor:
+- Keep this card visually consistent with the same carousel series.
+- Series ID: 소상공인 온라인 마케팅 체크리스트 | bold | photo
+- Repeated visual motif: 소상공인 온라인 마케팅 체크리스트를 상징하는 반복 오브젝트를 모든 카드에서 같은 질감과 시점으로 유지합니다.
+- Layout system: 체크리스트 강조형 카드뉴스로 보이도록 여백, 제목 위치, 보조 시각 요소의 크기를 일관되게 유지합니다.
+- Reuse the same palette, title rhythm, visual scale, and margin system across every card.
+
 Layout:
 - Square 1080x1080 composition for Instagram carousel.
 - Use a professional Korean social-media card-news layout.
@@ -26,14 +33,16 @@ Layout:
 Navigation: none
 - Do not show page numbers, badges, eyebrows, corner labels, or carousel counters on this card.
 
+
 Text must be exactly:
 Title: 마지막으로 기억할 것
-Body: 소상공인 온라인 마케팅 체크리스트은 상황에 따라 달라질 수 있습니다. 저장 후 내 조건과 최신 기준을 다시 확인하세요.
+Body: 소상공인 온라인 마케팅 체크리스트는 상황에 따라 달라질 수 있습니다. 저장 후 내 조건과 최신 기준을 다시 확인하세요.
 Footer: Card News Maker
 
 Typography:
 - Modern Korean sans-serif style.
 - Strong hierarchy: title large, body medium, optional bullet text compact.
+- Break long Korean titles into two balanced lines when needed; keep natural word groups together.
 - If a badge is listed in the exact text, keep it small and separate from the headline.
 - No distorted, misspelled, duplicated, or decorative Korean characters.
 

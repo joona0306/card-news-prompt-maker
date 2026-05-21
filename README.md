@@ -16,6 +16,7 @@ npm.cmd run create -- "여름철 폭염 건강관리"
 
 ```text
 output/여름철-폭염-건강관리/
+  style-guide.md
   prompts.md
   prompt-01.md
   prompt-02.md
@@ -55,7 +56,7 @@ npm.cmd run create -- "여름철 폭염 건강관리" --max-cards 8
 npm.cmd run create -- "여름철 폭염 건강관리" --card 2
 ```
 
-같은 주제 폴더에 `prompt-02.md`만 다시 생성합니다. 기존 `prompt-XX.md` 파일은 정리되므로, 전체 세트를 다시 만들려면 `--card` 없이 실행합니다.
+같은 주제 폴더에 `prompt-02.md`만 다시 생성합니다. 기존 다른 `prompt-XX.md` 파일과 최종 이미지로 저장한 `card-XX.png`는 유지됩니다. 전체 세트를 새로 만들려면 `--card` 없이 실행합니다.
 
 ### 출력 폴더 지정
 
@@ -126,6 +127,9 @@ npm.cmd run create -- "직장인 공감 업무 습관" --style meme
 | `--content-type` | 없음 | 콘텐츠 성격 | `--content-type general_info` |
 | `--source` | 없음 | 출처, 반복 가능 | `--source "자료명|https://example.com|2026-05-21"` |
 | `--checked-at` | 없음 | 출처 확인일 기본값 | `--checked-at 2026-05-21` |
+| `--fact` | 없음 | 확인된 핵심 사실, 반복 가능 | `--fact "등기부등본은 계약 직전 다시 확인"` |
+| `--must-include` | 없음 | 반드시 반영할 내용, 반복 가능 | `--must-include "보증금 반환 위험"` |
+| `--source-note` | 없음 | 출처/검수 메모, 반복 가능 | `--source-note "확인일을 검수 단계에 남김"` |
 | `--reviewer-role` | 없음 | 검수자 역할 | `--reviewer-role "변호사"` |
 | `--review-status` | 없음 | 검수 상태 | `--review-status required` |
 | `--disclaimer` | 없음 | 면책/주의 문구 | `--disclaimer "본 콘텐츠는 일반 정보입니다."` |
@@ -161,6 +165,7 @@ CLI 예시:
 npm.cmd run create -- "전세 계약 전 확인할 5가지" --domain real_estate --content-type general_info --source "국가법령정보센터 공인중개사법|https://www.law.go.kr/|2026-05-21" --reviewer-role "공인중개사 또는 변호사"
 npm.cmd run create -- "보험금 청구 전 확인사항" --domain insurance --source "금융감독원 소비자 안내|https://www.fss.or.kr/|2026-05-21" --forbidden-claim "무조건 보장"
 npm.cmd run create -- "고혈압 약 복용 전 확인사항" --domain medical --disclaimer "본 콘텐츠는 일반 건강 정보이며, 진단과 치료는 의료 전문가 상담이 필요합니다."
+npm.cmd run create -- "전세 계약 전 확인할 5가지" --fact "등기부등본은 계약 직전 다시 확인합니다." --must-include "전입신고와 확정일자는 별도 확인 항목으로 다룹니다."
 ```
 
 전문 분야는 JSON 사용을 권장합니다. 출처와 검수 정보를 구조화하기 쉽기 때문입니다.
@@ -187,12 +192,52 @@ npm.cmd run create -- "고혈압 약 복용 전 확인사항" --domain medical -
     "reviewerRole": "공인중개사 또는 변호사",
     "status": "required"
   },
+  "contentOutline": [
+    {
+      "title": "등기부등본 먼저 확인",
+      "body": "소유자, 근저당, 압류 여부를 계약 전 확인합니다.",
+      "bullets": ["계약 당일 재확인", "주소와 소유자 일치 확인"]
+    },
+    {
+      "title": "보증금 반환 위험 보기",
+      "body": "보증금 규모와 선순위 권리를 함께 확인합니다.",
+      "bullets": ["선순위 권리", "보증 가능 여부"]
+    }
+  ],
+  "facts": ["등기부등본은 계약 직전 다시 확인해야 합니다."],
+  "mustInclude": ["전입신고와 확정일자는 별도 확인 항목으로 다룹니다."],
+  "sourceNotes": ["국가법령정보센터와 보증기관 안내를 함께 확인합니다."],
   "disclaimer": "본 콘텐츠는 일반 정보이며, 개별 계약 판단은 전문가 상담이 필요합니다.",
   "forbiddenClaims": ["확정 수익", "무조건 안전"]
 }
 ```
 
 전문 분야 결과물은 게시 전 검수가 필요합니다. 하네스는 검수용 초안을 만들 뿐, 법률·의학·보험·부동산 판단을 확정하지 않습니다.
+
+## 구조화 카드 내용
+
+기본 자동 생성은 주제 키워드로 카드 본문을 만듭니다. 실무용 카드뉴스처럼 정확한 카드별 내용을 정해 두고 싶으면 JSON의 `contentOutline`을 사용합니다. `cards`도 같은 형식의 별칭으로 사용할 수 있습니다.
+
+```json
+{
+  "topic": "전세 계약 전 확인할 5가지",
+  "maxCards": 4,
+  "contentOutline": [
+    {
+      "title": "등기부등본 먼저 확인",
+      "body": "소유자, 근저당, 압류 여부를 계약 전 확인합니다.",
+      "bullets": ["계약 당일 재확인", "주소와 소유자 일치 확인"]
+    },
+    {
+      "title": "보증금 반환 위험 보기",
+      "body": "보증금 규모와 선순위 권리를 함께 확인합니다.",
+      "bullets": ["선순위 권리", "보증 가능 여부"]
+    }
+  ]
+}
+```
+
+`facts`, `mustInclude`, `sourceNotes`는 프롬프트의 Content controls 섹션에 들어가며, 구조화된 카드 내용이 없을 때는 본문 카드 초안에도 우선 반영됩니다.
 
 ## JSON 사용법
 
@@ -238,10 +283,11 @@ npm.cmd run create -- "직장인 공감 업무 습관" --cards 3 --preset minima
 ## 생성 후 작업 흐름
 
 1. `prompts.md`에서 전체 카드 목록을 확인합니다.
-2. `prompt-01.md`부터 GPT 이미지 생성 기능에 한 장씩 붙여 넣습니다.
-3. 생성된 이미지에서 한글 오탈자, 누락 문구, 잘림 여부를 확인합니다.
-4. 문제가 있는 카드만 `--card N`으로 프롬프트를 다시 만들거나 prompt 파일을 직접 조정합니다.
-5. 최종 이미지는 `card-01.png`, `card-02.png`처럼 저장합니다.
+2. `style-guide.md`에서 시리즈 앵커, 팔레트, 제목 줄바꿈 규칙을 확인합니다.
+3. `prompt-01.md`부터 GPT 이미지 생성 기능에 한 장씩 붙여 넣습니다.
+4. 생성된 이미지에서 한글 오탈자, 누락 문구, 잘림 여부를 확인합니다.
+5. 문제가 있는 카드만 `--card N`으로 프롬프트를 다시 만들거나 prompt 파일을 직접 조정합니다.
+6. 최종 이미지는 `card-01.png`, `card-02.png`처럼 저장합니다.
 
 ## 테스트
 
@@ -249,5 +295,5 @@ npm.cmd run create -- "직장인 공감 업무 습관" --cards 3 --preset minima
 npm.cmd test
 ```
 
-현재 테스트는 CLI 입력, JSON 입력, 카드 수 제한, 표지/마무리 카드, 본문 내비게이션 방식, preset별 텍스트 밀도, 디자인 프리셋, 시각 스타일, 프롬프트 생성, 특정 카드 재생성, 레거시 HTML/PNG 정리를 검증합니다.
-전문 분야 입력, 출처, 검수자 역할, 면책 문구, 금지 표현, 전문 분야 프롬프트 안전 문구도 함께 검증합니다.
+현재 테스트는 CLI 입력, JSON 입력, 구조화 카드 내용, 카드 수 제한, 한글 조사, 표지/마무리 카드, 본문 내비게이션 방식, preset별 텍스트 밀도, 디자인 프리셋, 시각 스타일, 프롬프트 생성, 비파괴 특정 카드 재생성, style guide 생성, 레거시 HTML 정리를 검증합니다.
+전문 분야 입력, 출처, 검수자 역할, 면책 문구, 금지 표현, facts/mustInclude/sourceNotes, 전문 분야 프롬프트 안전 문구도 함께 검증합니다.

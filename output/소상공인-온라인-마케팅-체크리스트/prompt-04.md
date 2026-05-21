@@ -11,10 +11,17 @@ Design concept: 체크리스트 강조형 (bold)
 Visual style: 사진형 (photo)
 
 Visual direction:
-- Create a supporting visual related to "실행 순서를 작게 나누기" and "소상공인 온라인 마케팅 체크리스트", using simple objects, subtle depth, and clear information-design composition.
+- Create a supporting visual related to "반응을 숫자로 남기기" and "소상공인 온라인 마케팅 체크리스트", using simple objects, subtle depth, and clear information-design composition.
 - Layout archetype: checklist utility card. Use modular blocks, strong separators, high-contrast accents, and a direct practical mood.
 - Hard visual style rule: photorealistic editorial photography. Keep a photographic look with realistic camera optics, natural shadows, believable materials, and no illustration, 3D render, vector icon, or meme graphic treatment.
 - The visual must support the card message and leave text readable.
+
+Series style anchor:
+- Keep this card visually consistent with the same carousel series.
+- Series ID: 소상공인 온라인 마케팅 체크리스트 | bold | photo
+- Repeated visual motif: 소상공인 온라인 마케팅 체크리스트를 상징하는 반복 오브젝트를 모든 카드에서 같은 질감과 시점으로 유지합니다.
+- Layout system: 체크리스트 강조형 카드뉴스로 보이도록 여백, 제목 위치, 보조 시각 요소의 크기를 일관되게 유지합니다.
+- Reuse the same palette, title rhythm, visual scale, and margin system across every card.
 
 Layout:
 - Square 1080x1080 composition for Instagram carousel.
@@ -27,18 +34,20 @@ Navigation: top-left badge only
 - Show only the badge "CHECK 03" in the top-left corner.
 - Do not show page numbers or any other carousel counter.
 
+
 Text must be exactly:
 Eyebrow: CHECK 03
-Title: 실행 순서를 작게 나누기
+Title: 반응을 숫자로 남기기
 Body: 소상공인 온라인 마케팅 체크리스트에서 바로 확인할 핵심 기준입니다.
 Bullets:
-- 오늘 확인할 것
-- 이번 주 준비할 것
+- 저장 수
+- 문의 수
 Footer: 소상공인 온라인 마케팅 체크리스트
 
 Typography:
 - Modern Korean sans-serif style.
 - Strong hierarchy: title large, body medium, optional bullet text compact.
+- Break long Korean titles into two balanced lines when needed; keep natural word groups together.
 - If a badge is listed in the exact text, keep it small and separate from the headline.
 - No distorted, misspelled, duplicated, or decorative Korean characters.
 

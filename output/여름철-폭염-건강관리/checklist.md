@@ -24,6 +24,7 @@
 - [x] prompt-06.md
 - [x] prompt-07.md
 - [x] prompt-08.md
+- [x] style-guide.md
 
 ## Professional Review
 
@@ -40,6 +41,7 @@
 
 ## Visual QA
 
+- [ ] `style-guide.md`의 시리즈 앵커가 모든 카드에 유지됨
 - [ ] 표지와 마무리 카드에는 페이지 번호와 배지가 없음
 - [ ] 본문 카드는 페이지 번호 또는 좌측 상단 배지 중 하나만 사용
 - [ ] 선택한 visualStyle의 시각 규칙이 실제 이미지에서 분명히 드러남

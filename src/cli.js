@@ -12,12 +12,13 @@ async function runCli(args = process.argv.slice(2), options = {}) {
   const request = normalizeInput(runtime.inputArgs, { cwd });
   const plan = createCardNewsPlan(request);
   const outputRoot = ensureInsideWorkspace(cwd, options.outputRoot || runtime.outputRoot || path.join(cwd, "output"));
+  const cardNumber = options.cardNumber ?? runtime.cardNumber;
   const promptResult = writePromptFiles(plan, {
     cwd,
     outputRoot,
-    cardNumber: options.cardNumber || runtime.cardNumber
+    cardNumber
   });
-  const checklistPath = writeRunChecklist({ request, plan, promptResult, cardNumber: options.cardNumber || runtime.cardNumber });
+  const checklistPath = writeRunChecklist({ request, plan, promptResult, cardNumber });
 
   return {
     request,
@@ -36,13 +37,13 @@ function parseRuntimeArgs(args) {
     const arg = args[index];
 
     if (arg === "--card") {
-      cardNumber = args[index + 1];
+      cardNumber = readRequiredRuntimeOptionValue(args, index, arg);
       index += 1;
       continue;
     }
 
     if (arg === "--output" || arg === "--out") {
-      outputRoot = args[index + 1];
+      outputRoot = readRequiredRuntimeOptionValue(args, index, arg);
       index += 1;
       continue;
     }
@@ -55,6 +56,15 @@ function parseRuntimeArgs(args) {
     inputArgs,
     outputRoot
   };
+}
+
+function readRequiredRuntimeOptionValue(args, index, optionName) {
+  const value = args[index + 1];
+  if (value === undefined || value === null || String(value).trim() === "" || String(value).startsWith("--")) {
+    throw new Error(`${optionName} 옵션 뒤에 값을 지정해 주세요.`);
+  }
+
+  return value;
 }
 
 function writeRunChecklist({ request, plan, promptResult, cardNumber }) {
@@ -83,11 +93,13 @@ ${cardNumber ? `- Selected card: ${cardNumber}` : "- Selected card: all"}
 ### Prompt
 
 ${promptItems}
+- [x] ${path.basename(promptResult.styleGuideFile)}
 
 ${professionalReview}
 
 ## Visual QA
 
+- [ ] \`style-guide.md\`의 시리즈 앵커가 모든 카드에 유지됨
 - [ ] 표지와 마무리 카드에는 페이지 번호와 배지가 없음
 - [ ] 본문 카드는 페이지 번호 또는 좌측 상단 배지 중 하나만 사용
 - [ ] 선택한 visualStyle의 시각 규칙이 실제 이미지에서 분명히 드러남
@@ -134,6 +146,7 @@ async function main() {
     console.log(`카드뉴스 프롬프트 출력 폴더: ${result.promptResult.outputDir}`);
     console.log(`프롬프트: ${result.promptResult.promptFiles.length}개`);
     console.log(`프롬프트 인덱스: ${result.promptResult.indexFile}`);
+    console.log(`스타일 가이드: ${result.promptResult.styleGuideFile}`);
     console.log(`체크리스트: ${result.checklistPath}`);
   } catch (error) {
     console.error(error.message);

@@ -13,15 +13,20 @@
 - [x] 주제별 디자인 프리셋 자동 선택
 - [x] 사진형/일러스트형/3D형/잡지형/밈형 시각 스타일 선택
 - [x] visualStyle별 강제 시각 규칙으로 결과물 차별화
+- [x] 카드 간 스타일 일관성을 위한 `style-guide.md`와 series style anchor 생성
+- [x] 긴 한글 제목용 두 줄 제목 규칙을 프롬프트와 style guide에 반영
 - [x] preset별 텍스트 밀도 조정
+- [x] 구조화 카드 내용 입력(`contentOutline`/`cards`) 지원
+- [x] 확인된 사실/필수 반영/출처 메모(`facts`/`mustInclude`/`sourceNotes`) 지원
+- [x] 한글 조사 자동 처리로 `임차인를` 같은 문장 오류 방지
 - [x] 표지/마무리 카드에서 페이지 번호와 배지 제거
 - [x] 본문 카드에서 페이지 번호 또는 좌측 상단 배지 중 하나만 사용
 - [x] 부동산/보험/법률/의학 전문 분야 안전 컨텍스트 지원
 - [x] 출처/검수자/면책 문구/금지 표현을 프롬프트와 체크리스트에 반영
 - [x] 카드별 GPT 이미지 생성 최종 프롬프트 생성
-- [x] 특정 카드만 다시 뽑는 `--card N` 옵션 지원
+- [x] 기존 프롬프트와 최종 PNG를 보존하는 비파괴 `--card N` 재생성 지원
 - [x] 실행별 `output/<topic>/checklist.md` 생성
-- [x] 이전 HTML/PNG 렌더 산출물 자동 정리
+- [x] 이전 HTML 렌더 산출물 자동 정리
 
 ## Commands
 
@@ -41,6 +46,7 @@ npm.cmd run create -- --file topics/example.json
 
 ```text
 output/<topic>/
+  style-guide.md
   prompts.md
   prompt-01.md
   prompt-02.md
@@ -50,7 +56,6 @@ output/<topic>/
 
 ## Next Improvements
 
-- [ ] 카드 간 스타일 일관성을 더 강하게 묶는 공통 style anchor 문장 추가
-- [ ] 긴 한글 제목을 이미지 생성 모델이 더 잘 처리하도록 두 줄 제목 규칙 추가
 - [ ] 생성된 실제 이미지 검수 체크리스트 추가
-- [ ] 전문 분야용 출처 요약 카드 템플릿 추가
+- [ ] 전문 분야별 출처 요약 카드 템플릿을 더 세분화
+- [ ] 실제 이미지 생성 결과를 OCR로 읽어 `Text must be exactly`와 비교하는 검수 도구 추가

@@ -11,10 +11,17 @@ Design concept: 체크리스트 강조형 (bold)
 Visual style: 사진형 (photo)
 
 Visual direction:
-- Create a supporting visual related to "내 상황과 맞는지 확인" and "소상공인 온라인 마케팅 체크리스트", using simple objects, subtle depth, and clear information-design composition.
+- Create a supporting visual related to "오늘 올릴 소재 정하기" and "소상공인 온라인 마케팅 체크리스트", using simple objects, subtle depth, and clear information-design composition.
 - Layout archetype: checklist utility card. Use modular blocks, strong separators, high-contrast accents, and a direct practical mood.
 - Hard visual style rule: photorealistic editorial photography. Keep a photographic look with realistic camera optics, natural shadows, believable materials, and no illustration, 3D render, vector icon, or meme graphic treatment.
 - The visual must support the card message and leave text readable.
+
+Series style anchor:
+- Keep this card visually consistent with the same carousel series.
+- Series ID: 소상공인 온라인 마케팅 체크리스트 | bold | photo
+- Repeated visual motif: 소상공인 온라인 마케팅 체크리스트를 상징하는 반복 오브젝트를 모든 카드에서 같은 질감과 시점으로 유지합니다.
+- Layout system: 체크리스트 강조형 카드뉴스로 보이도록 여백, 제목 위치, 보조 시각 요소의 크기를 일관되게 유지합니다.
+- Reuse the same palette, title rhythm, visual scale, and margin system across every card.
 
 Layout:
 - Square 1080x1080 composition for Instagram carousel.
@@ -27,18 +34,20 @@ Navigation: top-left badge only
 - Show only the badge "CHECK 02" in the top-left corner.
 - Do not show page numbers or any other carousel counter.
 
+
 Text must be exactly:
 Eyebrow: CHECK 02
-Title: 내 상황과 맞는지 확인
-Body: 소상공인 온라인 마케팅 체크리스트에서 바로 확인할 핵심 기준입니다.
+Title: 오늘 올릴 소재 정하기
+Body: 메뉴, 후기, 위치, 이벤트처럼 바로 촬영하거나 정리할 수 있는 소재부터 고릅니다.
 Bullets:
-- 필수 조건
-- 준비된 자료
+- 고객 후기
+- 대표 상품
 Footer: 소상공인 온라인 마케팅 체크리스트
 
 Typography:
 - Modern Korean sans-serif style.
 - Strong hierarchy: title large, body medium, optional bullet text compact.
+- Break long Korean titles into two balanced lines when needed; keep natural word groups together.
 - If a badge is listed in the exact text, keep it small and separate from the headline.
 - No distorted, misspelled, duplicated, or decorative Korean characters.
 

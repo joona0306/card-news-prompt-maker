@@ -63,7 +63,10 @@ function createProfessionalContext(request) {
     needsSourceReview: sources.length === 0,
     review,
     disclaimer: request.disclaimer || config.defaultDisclaimer,
-    forbiddenClaims
+    forbiddenClaims,
+    facts: normalizeStringArray(request.facts),
+    mustInclude: normalizeStringArray(request.mustInclude),
+    sourceNotes: normalizeStringArray(request.sourceNotes)
   };
 }
 
@@ -155,6 +158,14 @@ function normalizeSources(sources, defaultCheckedAt) {
 }
 
 function normalizeSource(source, defaultCheckedAt) {
+  if (!source) {
+    return {
+      title: "",
+      url: undefined,
+      checkedAt: defaultCheckedAt
+    };
+  }
+
   if (typeof source === "string") {
     const [title, url, checkedAt] = source.split("|").map((part) => part?.trim());
 

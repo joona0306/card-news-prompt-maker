@@ -7,6 +7,7 @@
 - Cards in plan: 6
 - Design preset: bold
 - Visual style: 사진형 (photo)
+- Style guide: style-guide.md
 - Professional domain: none
 
 ## Prompt Files
