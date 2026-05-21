@@ -1,0 +1,15 @@
+{
+  "name": "card-news-maker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reusable harness for generating final GPT image prompts for 1080x1080 Instagram card-news cards with design presets and visual styles.",
+  "main": "src/cli.js",
+  "scripts": {
+    "create": "node src/cli.js",
+    "test": "node --test",
+    "test:watch": "node --test --watch"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

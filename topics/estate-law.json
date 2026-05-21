@@ -1,0 +1,24 @@
+{
+ "topic": "전세 계약 전 확인할 5가지",
+ "audience": "전세 계약을 앞둔 임차인",
+ "goal": "계약 전 확인 항목을 일반 정보로 정리하기",
+ "maxCards": 6,
+ "designPreset": "bold",
+ "visualStyle": "illustration",
+ "domain": "real_estate",
+ "contentType": "general_info",
+ "sources": [
+  {
+   "title": "국가법령정보센터 공인중개사법",
+   "url": "https://www.law.go.kr/",
+   "checkedAt": "2026-05-21"
+  }
+ ],
+ "review": {
+  "required": true,
+  "reviewerRole": "공인중개사 또는 변호사",
+  "status": "required"
+ },
+ "disclaimer": "본 콘텐츠는 일반 정보이며, 개별 계약 판단은 전문가 상담이 필요합니다.",
+ "forbiddenClaims": ["확정 수익", "무조건 안전"]
+}
