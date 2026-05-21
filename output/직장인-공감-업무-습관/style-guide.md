@@ -6,12 +6,12 @@
 - Size: 1080x1080
 - Cards: 6
 - Design preset: 미니멀 메시지형 (minimal)
-- Visual style: 사진형 (photo)
+- Visual style: 밈형 (meme)
 
 ## Series Style Anchor
 
 - Keep this card visually consistent with the same carousel series.
-- Series ID: 직장인 공감 업무 습관 | minimal | photo
+- Series ID: 직장인 공감 업무 습관 | minimal | meme
 - Repeated visual motif: 직장인 공감 업무 습관을 상징하는 반복 오브젝트를 모든 카드에서 같은 질감과 시점으로 유지합니다.
 - Layout system: 미니멀 메시지형 카드뉴스로 보이도록 여백, 제목 위치, 보조 시각 요소의 크기를 일관되게 유지합니다.
 - Reuse the same palette, title rhythm, visual scale, and margin system across every card.

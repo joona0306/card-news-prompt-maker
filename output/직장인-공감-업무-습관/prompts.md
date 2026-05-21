@@ -6,7 +6,7 @@
 - Size: 1080x1080
 - Cards in plan: 6
 - Design preset: minimal
-- Visual style: 사진형 (photo)
+- Visual style: 밈형 (meme)
 - Style guide: style-guide.md
 - Professional domain: none
 

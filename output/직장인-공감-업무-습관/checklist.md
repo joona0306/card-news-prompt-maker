@@ -8,7 +8,7 @@
 - Goal: 바쁜 업무 중 바로 따라 할 수 있는 작고 현실적인 습관을 공감형 카드뉴스로 전달하기
 - Requested cards: 6
 - Design preset: minimal
-- Visual style: 사진형 (photo)
+- Visual style: 밈형 (meme)
 - Generator: local
 - Selected card: all
 
