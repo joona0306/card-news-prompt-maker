@@ -4,23 +4,23 @@
 Create a finished 1080x1080 Instagram card news image.
 
 Topic: 전세 계약 전 확인할 5가지
-Target audience: 전세 계약을 앞둔 임차인
-Card: 5 of 8
+Target audience: 인스타그램 사용자
+Card: 5 of 6
 Card role: body
-Design concept: 체크리스트 강조형 (bold)
-Visual style: 3D형 (3d)
+Design concept: 정보 정리형 (educational)
+Visual style: 일러스트형 (illustration)
 
 Visual direction:
-- Create a supporting visual related to "등기부등본" and "전세 계약 전 확인할 5가지", using simple objects, subtle depth, and clear information-design composition.
-- Layout archetype: checklist utility card. Use modular blocks, strong separators, high-contrast accents, and a direct practical mood.
-- Hard visual style rule: isometric 3D render. Use modeled objects, soft studio lighting, ambient occlusion, tactile clay or plastic materials, and avoid photography, flat vector illustration, or meme typography.
+- Create a supporting visual related to "입주 후 절차 확인" and "전세 계약 전 확인할 5가지", using simple objects, subtle depth, and clear information-design composition.
+- Layout archetype: explainer diagram. Use a structured grid, one small visual system, labels as shapes only, and a calm learning rhythm.
+- Hard visual style rule: custom editorial illustration. Use drawn shapes, simplified symbolic objects, controlled line work, and avoid photorealism, 3D render, stock-photo lighting, or meme graphics.
 - The visual must support the card message and leave text readable.
 
 Series style anchor:
 - Keep this card visually consistent with the same carousel series.
-- Series ID: 전세 계약 전 확인할 5가지 | bold | 3d
+- Series ID: 전세 계약 전 확인할 5가지 | educational | illustration
 - Repeated visual motif: 전세 계약 전 확인할 5가지를 상징하는 반복 오브젝트를 모든 카드에서 같은 질감과 시점으로 유지합니다.
-- Layout system: 체크리스트 강조형 카드뉴스로 보이도록 여백, 제목 위치, 보조 시각 요소의 크기를 일관되게 유지합니다.
+- Layout system: 정보 정리형 카드뉴스로 보이도록 여백, 제목 위치, 보조 시각 요소의 크기를 일관되게 유지합니다.
 - Reuse the same palette, title rhythm, visual scale, and margin system across every card.
 
 Layout:
@@ -30,26 +30,19 @@ Layout:
 - Place the main headline as the strongest visual element.
 - Use the visual element as support, not as a background that hides text.
 - Keep all text inside readable zones with strong contrast.
-Navigation: top-left badge only
-- Show only the badge "CHECK 04" in the top-left corner.
-- Do not show page numbers or any other carousel counter.
+Navigation: page number only
+- Show only the page number "5/6" in a quiet corner.
+- Do not show badges, eyebrows, POINT labels, or corner category tags.
 
-Content controls:
-- Use these controls to avoid generic copy and unsupported claims.
-- Checked facts:
-  - 등기부등본은 계약 직전 다시 확인해야 합니다.
-- Must include:
-  - 전입신고와 확정일자는 별도 확인 항목으로 다룹니다.
-- Source notes:
-  - 국가법령정보센터와 보증기관 안내를 함께 확인합니다.
 
 Text must be exactly:
-Eyebrow: CHECK 04
-Title: 등기부등본
-Body: 등기부등본은 계약 직전 다시 확인해야 합니다.
+Title: 입주 후 절차 확인
+Body: 입주 뒤에는 전입신고, 확정일자, 보증 관련 절차를 빠르게 확인합니다.
 Bullets:
-- 국가법령정보센터와 보증기관 안내를 함께 확인합니다.
+- 전입신고
+- 확정일자
 Footer: 전세 계약 전 확인할 5가지
+Page number: 5/6
 
 Typography:
 - Modern Korean sans-serif style.
@@ -59,10 +52,10 @@ Typography:
 - No distorted, misspelled, duplicated, or decorative Korean characters.
 
 Color palette:
-- Background: #fef2f2
-- Primary text: #1f2937
-- Accent: #b91c1c
-- Secondary accent: #0f766e
+- Background: #f7fbff
+- Primary text: #102033
+- Accent: #0f766e
+- Secondary accent: #f59e0b
 
 Professional safety:
 - Domain: 부동산 (real_estate)
@@ -70,7 +63,7 @@ Professional safety:
 - Review required: yes
 - Reviewer role: 공인중개사 또는 변호사
 - Review status: required
-- Disclaimer: 본 콘텐츠는 일반 정보이며, 개별 계약 판단은 전문가 상담이 필요합니다.
+- Disclaimer: 본 콘텐츠는 일반 정보이며, 개별 계약 또는 투자 판단은 전문가 상담이 필요합니다.
 - Sources:
 - 국가법령정보센터 공인중개사법 (https://www.law.go.kr/), checked at 2026-05-21
 - Forbidden claims:

@@ -4,9 +4,9 @@
 
 - Topic: 전세 계약 전 확인할 5가지
 - Size: 1080x1080
-- Cards in plan: 8
-- Design preset: bold
-- Visual style: 3D형 (3d)
+- Cards in plan: 6
+- Design preset: educational
+- Visual style: 일러스트형 (illustration)
 - Style guide: style-guide.md
 - Professional domain: 부동산 (real_estate)
 
@@ -18,8 +18,6 @@
 - prompt-04.md
 - prompt-05.md
 - prompt-06.md
-- prompt-07.md
-- prompt-08.md
 
 ## Use
 
